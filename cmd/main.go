@@ -17,7 +17,6 @@ func main() {
 	sui := ui.NewServerUI(w)
 
 	menus := []*fyne.Menu{
-		fyne.NewMenu("Vaults", fyne.NewMenuItem("New Vault", hui.CreateVault)),
 		fyne.NewMenu("File Sharing",
 			fyne.NewMenuItem("Host Directory", sui.ChooseHostDir),
 			fyne.NewMenuItem("Share file", sui.ShareFile),
