@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/Owbird/SVault-Engine/pkg/models"
-	"github.com/Owbird/SVault-Engine/pkg/server"
+	"github.com/Owbird/SNetT-Engine/pkg/models"
+	"github.com/Owbird/SNetT-Engine/pkg/server"
 )
 
 type ServerFunctions struct {

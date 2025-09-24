@@ -7,10 +7,10 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"github.com/Owbird/SVault-Engine/pkg/config"
-	"github.com/Owbird/SVault-Engine/pkg/models"
-	engineServer "github.com/Owbird/SVault-Engine/pkg/server"
-	"github.com/owbird/svault/internal/server"
+	"github.com/Owbird/SNetT-Engine/pkg/config"
+	"github.com/Owbird/SNetT-Engine/pkg/models"
+	engineServer "github.com/Owbird/SNetT-Engine/pkg/server"
+	"github.com/owbird/snett/internal/server"
 	"github.com/skratchdot/open-golang/open"
 )
 

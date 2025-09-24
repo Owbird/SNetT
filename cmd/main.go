@@ -3,13 +3,13 @@ package main
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"github.com/owbird/svault/internal/ui"
+	"github.com/owbird/snett/internal/ui"
 )
 
 func main() {
 	a := app.New()
 
-	w := a.NewWindow("SVault")
+	w := a.NewWindow("SNetT")
 
 	w.Resize(fyne.NewSize(500, 500))
 
