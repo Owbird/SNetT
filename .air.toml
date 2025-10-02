@@ -1,7 +1,16 @@
 # air.toml
 
 [build]
-  kill_delay="0s"
+  cmd = "go build -o ./tmp/main ./cmd/main.go"
+  bin = "./tmp/main"
+  
   delay = 1000
-  main = "cmd/main.go"
-  cmd = "go run cmd/main.go"
+  stop_on_error = false
+  send_interrupt = true
+  kill_delay = "500ms"
+  
+[log]
+  time = true
+
+[misc]
+  clean_on_exit = true
