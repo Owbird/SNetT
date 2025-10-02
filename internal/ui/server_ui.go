@@ -9,7 +9,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/Owbird/SNetT-Engine/pkg/config"
 	"github.com/Owbird/SNetT-Engine/pkg/models"
-	engineServer "github.com/Owbird/SNetT-Engine/pkg/server"
+
 	"github.com/owbird/snett/internal/server"
 	"github.com/skratchdot/open-golang/open"
 )
@@ -33,70 +33,14 @@ func NewServerUI(window fyne.Window) *ServerUI {
 	}
 }
 
-func (sui *ServerUI) ReceiveFile() {
-	codeInput := widget.NewEntry()
-	codeInput.SetPlaceHolder("2-code-here")
-
-	codeForm := widget.NewFormItem("Code", codeInput)
-
-	formItems := []*widget.FormItem{
-		codeForm,
-	}
-
-	callback := func(create bool) {
-		if create {
-			if err := sui.Functions.Receive(codeInput.Text); err != nil {
-				dialog.NewError(err, sui.Window)
-			}
-		}
-	}
-
-	dialog.NewForm("Enter code",
-		"Receive",
-		"Cancel",
-		formItems,
-		callback,
-		sui.Window,
-	).Show()
-}
-
-func (sui *ServerUI) ShareFile() {
-	dialog.ShowFileOpen(func(uc fyne.URIReadCloser, err error) {
-		if err != nil {
-			dialog.NewError(err, sui.Window)
-			return
-		}
-
-		file := uc.URI().Path()
-
-		var codeReceivedDialog dialog.Dialog
-
-		sui.Functions.Share(file, engineServer.ShareCallBacks{
-			OnFileSent: func() {
-				codeReceivedDialog.Hide()
-				dialog.NewInformation("File sent", "File sent successfully", sui.Window).Show()
-			},
-			OnSendErr: func(err error) {
-				dialog.NewError(err, sui.Window).Show()
-			},
-			OnProgressChange: func(progress models.FileShareProgress) {},
-			OnCodeReceive: func(code string) {
-				codeReceivedDialog = dialog.NewInformation("Code received", code, sui.Window)
-
-				codeReceivedDialog.Show()
-			},
-		})
-	}, sui.Window)
-}
-
-func (sui *ServerUI) ChooseHostDir() {
+func (wui *ServerUI) ChooseHostDir() {
 	dialog.ShowFolderOpen(func(lu fyne.ListableURI, err error) {
 		if err != nil {
-			dialog.NewError(err, sui.Window)
+			dialog.NewError(err, wui.Window)
 			return
 		}
 
-		go sui.Functions.Host(lu.Path())
+		go wui.Functions.Host(lu.Path())
 
 		logWindow := fyne.CurrentApp().NewWindow("Server Logs")
 		logWindow.Resize(fyne.NewSize(500, 500))
@@ -126,7 +70,7 @@ func (sui *ServerUI) ChooseHostDir() {
 		}
 
 		go func() {
-			for l := range sui.Functions.LogCh {
+			for l := range wui.Functions.LogCh {
 				switch l.Type {
 				case models.API_LOG:
 					if l.Error != nil {
@@ -155,10 +99,10 @@ func (sui *ServerUI) ChooseHostDir() {
 			}
 			logsContainer.Refresh()
 		}()
-	}, sui.Window)
+	}, wui.Window)
 }
 
-func (sui *ServerUI) ServerSettings() {
+func (wui *ServerUI) ServerSettings() {
 	settingsWindow := fyne.CurrentApp().NewWindow("Server settings")
 	settingsWindow.Resize(fyne.NewSize(500, 500))
 

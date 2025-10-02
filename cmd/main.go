@@ -15,14 +15,18 @@ func main() {
 
 	hui := ui.NewHomeUI(w)
 	sui := ui.NewServerUI(w)
+	wui := ui.NewWormholeUI(w)
 
 	menus := []*fyne.Menu{
-		fyne.NewMenu("File Sharing",
+		fyne.NewMenu("Server",
 			fyne.NewMenuItem("Host Directory", sui.ChooseHostDir),
-			fyne.NewMenuItem("Share file", sui.ShareFile),
-			fyne.NewMenuItem("Receive file", sui.ReceiveFile),
 			fyne.NewMenuItem("Settings", sui.ServerSettings),
 		),
+		fyne.NewMenu("Wormhole",
+			fyne.NewMenuItem("Share file", wui.ShareFile),
+			fyne.NewMenuItem("Receive file", wui.ReceiveFile),
+		),
+
 	}
 
 	w.SetMainMenu(fyne.NewMainMenu(menus...))

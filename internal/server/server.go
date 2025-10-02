@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/Owbird/SNetT-Engine/pkg/config"
 	"github.com/Owbird/SNetT-Engine/pkg/models"
 	"github.com/Owbird/SNetT-Engine/pkg/server"
 )
@@ -19,14 +20,18 @@ func NewServerFunctions() *ServerFunctions {
 }
 
 func (sf *ServerFunctions) Host(dir string) {
+	appConfig := config.NewAppConfig()
+
 	sf.server = server.NewServer(dir, sf.LogCh)
-	sf.server.Start()
+	sf.server.Start(*appConfig)
 }
 
 func (sf *ServerFunctions) Receive(code string) error {
-	return sf.server.Receive(code)
+	// return sf.server.Receive(code)
+
+	return nil
 }
 
-func (sf *ServerFunctions) Share(file string, callbacks server.ShareCallBacks) {
-	sf.server.Share(file, callbacks)
+func (sf *ServerFunctions) Share(file string, callbacks any) {
+	// sf.server.Share(file, callbacks)
 }
