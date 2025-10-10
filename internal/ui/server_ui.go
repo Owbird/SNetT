@@ -41,6 +41,10 @@ func (wui *ServerUI) ChooseHostDir() {
 			return
 		}
 
+		if lu == nil {
+			return
+		}
+
 		go wui.Functions.Host(lu.Path())
 
 		logWindow := fyne.CurrentApp().NewWindow("Server Logs")
