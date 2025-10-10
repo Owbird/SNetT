@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"strconv"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -113,22 +114,38 @@ func (wui *ServerUI) ServerSettings() {
 	serverNameInput := widget.NewEntry()
 	serverNameInput.SetPlaceHolder("Enter name")
 
+	serverPort := widget.NewEntry()
+	serverPort.SetPlaceHolder("Enter port")
+
 	allowUploadsChecker := widget.NewCheck("Allow uploads", func(value bool) {
 		serverConfig.SetAllowUploads(value)
 	})
 
+	allowOnlineChecker := widget.NewCheck("Allow online", func(value bool) {
+		serverConfig.SetAllowOnline(value)
+	})
+
 	serverNameInput.Text = serverConfig.GetName()
+	serverNameInput.OnChanged = func(s string) {
+		serverConfig.SetName(s)
+	}
+
+	serverPort.Text = strconv.Itoa(serverConfig.GetPort())
+	serverPort.OnChanged = func(s string) {
+		port, _ := strconv.Atoi(s)
+		serverConfig.SetPort(port)
+	}
+
 	allowUploadsChecker.Checked = serverConfig.GetAllowUploads()
+	allowOnlineChecker.Checked = serverConfig.GetAllowOnline()
 
 	saveBtn := widget.NewButton("Save", func() {
-		serverConfig.SetName(serverNameInput.Text)
-
 		appConfig.Save()
 
 		settingsWindow.Close()
 	})
 
-	layoutContainer := container.NewVBox(serverNameInput, allowUploadsChecker, saveBtn)
+	layoutContainer := container.NewVBox(serverNameInput, serverPort, allowUploadsChecker, allowOnlineChecker, saveBtn)
 
 	settingsWindow.SetContent(layoutContainer)
 
