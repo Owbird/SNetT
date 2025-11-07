@@ -77,28 +77,20 @@ func (wui *ServerUI) ChooseHostDir() {
 		go func() {
 			for l := range wui.Functions.LogCh {
 				switch l.Type {
-				case models.API_LOG:
-					if l.Error != nil {
-						showLog(LogError, fmt.Sprintf("[!] API Log [error]: %v", l.Error.Error()))
-					} else {
-						showLog(LogSuccess, fmt.Sprintf("[+] API Log: %v", l.Message))
-					}
+				case models.SERVER_ERROR:
+					showLog(LogError, fmt.Sprintf("[!] API Log [error]: %v", l.Value))
 
-				case models.SERVE_WEB_UI_NETWORK:
-					showLog(LogSuccess, fmt.Sprintf("[+] Network Web Running: %v", l.Message))
+				case models.SERVE_UI_LOCAL:
+					showLog(LogSuccess, fmt.Sprintf("[+] Network Web Running: %v", l.Value))
 
-				case models.SERVE_WEB_UI_REMOTE:
-					showLog(LogSuccess, fmt.Sprintf("[+] Remote Web Running: %v", l.Message))
+				case models.SERVE_UI_REMOTE:
+					showLog(LogSuccess, fmt.Sprintf("[+] Remote Web Running: %v", l.Value))
 
-					open.Run(l.Message)
+					open.Run(l.Value)
 					open.Run("https://loca.lt/mytunnelpassword")
 
 				default:
-					if l.Error != nil {
-						showLog(LogError, fmt.Sprintf("[!] Error: %v", l.Error.Error()))
-					} else {
-						showLog(LogError, fmt.Sprintf("[+] Log: %v", l.Message))
-					}
+					showLog(LogError, fmt.Sprintf("[+] Log: %v", l.Value))
 
 				}
 			}
@@ -122,26 +114,26 @@ func (wui *ServerUI) ServerSettings() {
 	serverPort.SetPlaceHolder("Enter port")
 
 	allowUploadsChecker := widget.NewCheck("Allow uploads", func(value bool) {
-		serverConfig.SetAllowUploads(value)
+		serverConfig.AllowUploads = value
 	})
 
 	allowOnlineChecker := widget.NewCheck("Allow online", func(value bool) {
-		serverConfig.SetAllowOnline(value)
+		serverConfig.AllowOnline = value
 	})
 
-	serverNameInput.Text = serverConfig.GetName()
+	serverNameInput.Text = serverConfig.Name
 	serverNameInput.OnChanged = func(s string) {
-		serverConfig.SetName(s)
+		serverConfig.Name = s
 	}
 
-	serverPort.Text = strconv.Itoa(serverConfig.GetPort())
+	serverPort.Text = strconv.Itoa(serverConfig.Port)
 	serverPort.OnChanged = func(s string) {
 		port, _ := strconv.Atoi(s)
-		serverConfig.SetPort(port)
+		serverConfig.Port = port
 	}
 
-	allowUploadsChecker.Checked = serverConfig.GetAllowUploads()
-	allowOnlineChecker.Checked = serverConfig.GetAllowOnline()
+	allowUploadsChecker.Checked = serverConfig.AllowUploads
+	allowOnlineChecker.Checked = serverConfig.AllowOnline
 
 	saveBtn := widget.NewButton("Save", func() {
 		appConfig.Save()
