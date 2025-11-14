@@ -11,7 +11,7 @@ import (
 	"github.com/Owbird/SNetT-Engine/pkg/config"
 	"github.com/Owbird/SNetT-Engine/pkg/models"
 
-	"github.com/owbird/snett/internal/server"
+	"github.com/Owbird/SNetT-Engine/pkg/server"
 	"github.com/skratchdot/open-golang/open"
 )
 
@@ -23,14 +23,18 @@ const (
 )
 
 type ServerUI struct {
-	Window    fyne.Window
-	Functions *server.ServerFunctions
+	Window fyne.Window
+	Server *server.Server
+	LogCh  chan models.ServerLog
 }
 
 func NewServerUI(window fyne.Window) *ServerUI {
+	logCh := make(chan models.ServerLog)
+
 	return &ServerUI{
-		Window:    window,
-		Functions: server.NewServerFunctions(),
+		Window: window,
+		LogCh:  logCh,
+		Server: server.NewServer("", logCh),
 	}
 }
 
@@ -45,7 +49,11 @@ func (wui *ServerUI) ChooseHostDir() {
 			return
 		}
 
-		go wui.Functions.Host(lu.Path())
+		appConfig := config.NewAppConfig()
+
+		wui.Server.Dir = lu.Path()
+
+		go wui.Server.Start(*appConfig)
 
 		logWindow := fyne.CurrentApp().NewWindow("Server Logs")
 		logWindow.Resize(fyne.NewSize(500, 500))
@@ -75,10 +83,13 @@ func (wui *ServerUI) ChooseHostDir() {
 		}
 
 		go func() {
-			for l := range wui.Functions.LogCh {
+			for l := range wui.LogCh {
 				switch l.Type {
 				case models.SERVER_ERROR:
 					showLog(LogError, fmt.Sprintf("[!] API Log [error]: %v", l.Value))
+
+				case models.API_LOG:
+					showLog(LogSuccess, fmt.Sprintf("[+] %v", l.Value))
 
 				case models.SERVE_UI_LOCAL:
 					showLog(LogSuccess, fmt.Sprintf("[+] Network Web Running: %v", l.Value))
@@ -97,6 +108,31 @@ func (wui *ServerUI) ChooseHostDir() {
 			logsContainer.Refresh()
 		}()
 	}, wui.Window)
+}
+
+func (wui *ServerUI) Discover() {
+	logWindow := fyne.CurrentApp().NewWindow("Available servers")
+	logWindow.Resize(fyne.NewSize(500, 500))
+
+	logsContainer := container.NewVBox()
+
+	servers := make(chan models.SNetTServer)
+
+	logWindow.SetContent(container.NewVScroll(logsContainer))
+
+	logWindow.Show()
+
+	go wui.Server.List(servers)
+
+	for s := range servers {
+		logsContainer.Add(
+			widget.NewRichText(
+				&widget.TextSegment{
+					Text: fmt.Sprintf("[%v] %v:%v", s.Name, s.IP, s.Port),
+				},
+			),
+		)
+	}
 }
 
 func (wui *ServerUI) ServerSettings() {

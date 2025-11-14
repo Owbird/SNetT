@@ -20,6 +20,7 @@ func main() {
 	menus := []*fyne.Menu{
 		fyne.NewMenu("Server",
 			fyne.NewMenuItem("Host Directory", sui.ChooseHostDir),
+			fyne.NewMenuItem("Discover", sui.Discover),
 			fyne.NewMenuItem("Settings", sui.ServerSettings),
 		),
 		fyne.NewMenu("Wormhole",
